@@ -65,9 +65,24 @@ function handleFormSubmit(event) {
   data.phone.value = "";
 }
 
-function showUserOnScreen(obj) {
+window.addEventListener("DOMContentLoaded", () => {
+  axios
+    .get(
+      "https://crudcrud.com/api/3b91d491bb464ef98254835e258ea93b/appointmentData"
+    )
+    .then((response) => {
+      console.log(response);
+
+      for (let i = 0; i < response.data.length; i++) {
+        showUserOnScreen(response.data[i]);
+      }
+    })
+    .catch((err) => console.log(err));
+});
+
+function showUserOnScreen(user) {
   const memberlist = document.querySelector("ul");
-  const fullname = `${obj.username} - ${obj.email} - ${obj.phone}`;
+  const fullname = `${user.username} - ${user.email} - ${user.phone}`;
   const newmember = makeli(fullname);
   memberlist.appendChild(newmember);
 }
