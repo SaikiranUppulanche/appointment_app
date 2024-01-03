@@ -1,16 +1,33 @@
-function handleDeleteAndEdit(event) {
+function handleDelete(event) {
+  const listId = event.target.parentElement.id;
+  axios
+    .delete(
+      `https://crudcrud.com/api/87a65b085c1248d78650576c5a0142b8/appointmentData/${listId}`
+    )
+    .then((response) => console.log(response))
+    .catch((err) => console.log(err));
+  event.target.parentElement.remove();
+}
+
+function handleEdit(event) {
   const form = document.querySelector("form");
+  const listId = event.target.parentElement.id;
   const data = event.target.parentElement.firstChild.textContent.split(" - ");
   if (event.target.id == "edit") {
     form.username.value = data[0];
     form.email.value = data[1];
     form.phone.value = data[2];
   }
-  localStorage.removeItem(data[1]);
+
+  axios
+    .delete(
+      `https://crudcrud.com/api/87a65b085c1248d78650576c5a0142b8/appointmentData/${listId}`
+    )
+    .catch((err) => console.log(err));
   event.target.parentElement.remove();
 }
 
-function makeli(value) {
+function makeli(value, user) {
   const newli = document.createElement("li");
   const btnDel = document.createElement("button");
   const btnEdit = document.createElement("button");
@@ -22,9 +39,9 @@ function makeli(value) {
   btnEdit.style.margin = "5px";
   btnDel.type = "button";
   btnEdit.type = "button";
-  btnDel.addEventListener("click", handleDeleteAndEdit);
-  btnEdit.addEventListener("click", handleDeleteAndEdit);
-  newli.id = "member";
+  btnDel.addEventListener("click", handleDelete);
+  btnEdit.addEventListener("click", handleEdit);
+  newli.id = user._id;
   newli.textContent = value;
   newli.appendChild(btnDel);
   newli.appendChild(btnEdit);
@@ -48,7 +65,7 @@ function handleFormSubmit(event) {
 
   axios
     .post(
-      "https://crudcrud.com/api/3b91d491bb464ef98254835e258ea93b/appointmentData",
+      "https://crudcrud.com/api/87a65b085c1248d78650576c5a0142b8/appointmentData",
       myobj
     )
     .then((response) => {
@@ -68,10 +85,10 @@ function handleFormSubmit(event) {
 window.addEventListener("DOMContentLoaded", () => {
   axios
     .get(
-      "https://crudcrud.com/api/3b91d491bb464ef98254835e258ea93b/appointmentData"
+      "https://crudcrud.com/api/87a65b085c1248d78650576c5a0142b8/appointmentData"
     )
     .then((response) => {
-      console.log(response);
+      //   console.log(response);
 
       for (let i = 0; i < response.data.length; i++) {
         showUserOnScreen(response.data[i]);
@@ -83,6 +100,6 @@ window.addEventListener("DOMContentLoaded", () => {
 function showUserOnScreen(user) {
   const memberlist = document.querySelector("ul");
   const fullname = `${user.username} - ${user.email} - ${user.phone}`;
-  const newmember = makeli(fullname);
+  const newmember = makeli(fullname, user);
   memberlist.appendChild(newmember);
 }
